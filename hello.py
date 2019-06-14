@@ -26,22 +26,23 @@ for tweet in public_tweets:
 
 
 # searches hashtags
-search_words = ('#GitCommitShow' , '#gitcommitshow')
-tweets = tweepy.Cursor(api.search,
-                q=search_words,
+search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.show -from:gitcommitshow'
+
+all_tweets = tweepy.Cursor(api.search,
+                q=search_tags,
                 lang="en").items()
 
-my_name = ["gitcommitshow"]
-others = [tweet for tweet in tweets if tweet.user.screen_name not in my_name]
+#my_name = ["gitcommitshow"]
+#others = [tweet for tweet in all_tweets if tweet.user.screen_name not in my_name]
 
-for tweet in others:
+for tweet in all_tweets:
     try:
         print("Operating on " +tweet.user.screen_name)
         api.retweet(tweet.id)
         api.create_favorite(tweet.id)
         api.create_friendship(tweet.user.id)
     except tweepy.error.TweepError:
-        print("skipping the tweet: " +str(tweet.id) +"by: " +str(tweet.user.screen_name))
+        print("oh no. i need to skip it. \nskipping the tweet: " +str(tweet.id) +" by: " +str(tweet.user.screen_name) +'\n')
         pass
 
 
