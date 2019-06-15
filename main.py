@@ -1,12 +1,14 @@
 import tweepy
 from data import *
 import datetime
-import pandas as pd
+import logging
 from time import sleep
 
 
 # timestamp
 today = datetime.datetime.now().strftime("%A, %d %B %Y, %I:%M %p")
+
+logging.basicConfig(filename='app.log', filemode='a+', format='%(asctime)s: %(name)s - %(levelname)s - %(message)s')
 
 
 # give auth
@@ -24,8 +26,6 @@ all_tweets = tweepy.Cursor(api.search,
                 since='2019-05-01',
                 lang="en").items(1000)
 
-#my_name = ["gitcommitshow"]
-#others = [tweet for tweet in all_tweets if tweet.user.screen_name not in my_name]
 
 for tweet in all_tweets:
     try:
@@ -52,6 +52,7 @@ for tweet in all_tweets:
 
 
     except tweepy.TweepError as e:
+        logging.warning(e.reason)
         print(e.reason)
 
     except StopIteration:
