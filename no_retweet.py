@@ -14,14 +14,12 @@ logging.basicConfig(filename='app.log', filemode='a+', format='%(asctime)s: %(na
 # give auth
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-#api = tweepy.API(auth)
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
+api = tweepy.API(auth)
 
 
 # searches hashtags
-# search_tags = ('#GitCommitShow', '#gitcommitshow', 'gitcommitshow', 'gitcommitshow', 'gitcommit.show') 
-search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.show'
+# search_tags = ('#GitCommitShow', '#gitcommitshow', 'gitcommitshow', 'gitcommitshow', 'gitcommit.show')
+search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.show -filter:retweets'
 
 all_tweets = tweepy.Cursor(api.search,
                 q=search_tags,
@@ -31,28 +29,8 @@ all_tweets = tweepy.Cursor(api.search,
 
 for tweet in all_tweets:
     try:
-        tweet = all_tweets.next()
         print('Tweet by: @' + tweet.user.screen_name)
-        
-        #  Retweet the tweet
-        tweet.retweet()
-        print('Retweeted the tweet')
-        sleep(5)
-
-        # Favorite the tweet
-        tweet.favorite()
-        print('Favorited the tweet')
-
-        # Follow the user who tweeted
-        if not tweet.user.following:
-            tweet.user.follow()
-            print('Followed the user')
-
-        
-        api.retweet(tweet.id)
-        api.create_favorite(tweet.id)
-        api.create_friendship(tweet.user.id)
-
+        print(tweet.text)
 
     except tweepy.TweepError as e:
         logging.warning(e.reason)
