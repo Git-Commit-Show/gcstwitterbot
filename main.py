@@ -1,5 +1,5 @@
 import tweepy
-from data import *
+from creds import *
 import datetime
 import logging
 from time import sleep
@@ -14,11 +14,16 @@ logging.basicConfig(filename='app.log', filemode='a+', format='%(asctime)s: %(na
 # give auth
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-#api = tweepy.API(auth)
+
+
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
+# test tweet 
+api.update_status("Test tweet from Tweepy Python")
 
+
+'''
 # searches hashtags
 # search_tags = ('#GitCommitShow', '#gitcommitshow', 'gitcommitshow', 'gitcommitshow', 'gitcommit.show') 
 search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.show'
@@ -33,7 +38,7 @@ for tweet in all_tweets:
     try:
         tweet = all_tweets.next()
         print('Tweet by: @' + tweet.user.screen_name)
-        
+
         #  Retweet the tweet
         tweet.retweet()
         print('Retweeted the tweet')
@@ -48,7 +53,7 @@ for tweet in all_tweets:
             tweet.user.follow()
             print('Followed the user')
 
-        
+
         api.retweet(tweet.id)
         api.create_favorite(tweet.id)
         api.create_friendship(tweet.user.id)
@@ -60,3 +65,5 @@ for tweet in all_tweets:
 
     except StopIteration:
         break
+
+'''
