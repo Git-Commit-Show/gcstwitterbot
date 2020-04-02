@@ -1,22 +1,12 @@
-import os
+from config import *
 import json
-import tweepy
-from creds import *
 from time import gmtime, strftime
 
 
-# logger
-
+# custom logger
 bot_username = 'gitcommitshow'
 logfile_name = bot_username + ".log"
 errorfile_name = "errors.log"
-
-# Auth
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-
-# Create API object
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
 def log(message):
@@ -43,14 +33,27 @@ class MyStreamListener(tweepy.StreamListener):
     def on_status(self, tweet):
         uname = tweet.user.name
         text = tweet.text
-        try:
-            tweet.favorite()
-            tweet.user.follow()
-        except tweepy.error.TweepError as e:
-            ErrorLog(e.message)
-        log(uname + ' said ' + text + "\n")
+        if tweet.in_reply_to_status_id is not None or \
+                            tweet.user.id == self.me.id:
+            return
+
         print(uname + ' said ' + text + "\n")
 
+        if not tweet.favorited:
+            try:
+                tweet.user.follow()
+                tweet.favorite()
+            except tweepy.error.TweepError as e:
+                ErrorLog("[FAVORITE ERROR] " + e.message)
+
+        if not tweet.retweeted:
+            try:
+                tweet.retweet()
+            except tweepy.error.TweepError as e:
+                ErrorLog("[RETWEET ERROR] " + e.message)
+
+
+        log(uname + ' said ' + text + "\n")
     '''
     def mentions(self, tweet):
         myMentions = api.mentions_timeline()
@@ -67,6 +70,7 @@ class MyStreamListener(tweepy.StreamListener):
         print("Error detected")
 
 
+# lists the first 20 tweets in my timeline
 def timeline():
     timeline = api.home_timeline()
     for tweet in timeline:
@@ -76,10 +80,17 @@ def timeline():
         log(uname + ' said ' + text + "\n")
 
 
+def main(keywords):
 
+    # initialize api
+    api = create_api()
 
-if __name__ == "__main__":
     #timeline()
     tweets_listener = MyStreamListener(api)
     stream = tweepy.Stream(api.auth, tweets_listener)
-    stream.filter(track=["#gitcommitshow", "#GitCommitShow", "gitcommitshow", "gitcommit.show"])
+    stream.filter(track= keywords)
+
+
+
+if __name__ == "__main__":
+    main(["#gitcommitshow", "#GitCommitShow", "gitcommitshow", "gitcommit.show"])
