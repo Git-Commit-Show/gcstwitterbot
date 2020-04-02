@@ -54,17 +54,6 @@ class MyStreamListener(tweepy.StreamListener):
 
 
         log(uname + ' said ' + text + "\n")
-    '''
-    def mentions(self, tweet):
-        myMentions = api.mentions_timeline()
-        for tweet in myMentions:
-            try:
-                tweet.favorite()
-                tweet.user.follow()
-
-            except tweepy.error.TweepError as e:
-            ErrorLog(e.message)
-    '''
 
     def on_error(self, status):
         print("Error detected")
@@ -84,12 +73,10 @@ def main(keywords):
 
     # initialize api
     api = create_api()
-
     #timeline()
     tweets_listener = MyStreamListener(api)
     stream = tweepy.Stream(api.auth, tweets_listener)
     stream.filter(track= keywords)
-
 
 
 if __name__ == "__main__":
