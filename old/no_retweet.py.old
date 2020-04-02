@@ -23,7 +23,7 @@ search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.sh
 
 all_tweets = tweepy.Cursor(api.search,
                 q=search_tags,
-                since='2019-05-01',
+                since='2020-01-01',
                 lang="en").items(1000)
 
 

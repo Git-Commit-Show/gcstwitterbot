@@ -20,17 +20,17 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
 # test tweet 
-api.update_status("Test tweet from Tweepy Python")
+#api.update_status("Test tweet from Tweepy Python")
 
 
-'''
+
 # searches hashtags
 # search_tags = ('#GitCommitShow', '#gitcommitshow', 'gitcommitshow', 'gitcommitshow', 'gitcommit.show') 
 search_tags = '#GitCommitShow OR #gitcommitshow OR gitcommitshow OR gitcommit.show'
 
 all_tweets = tweepy.Cursor(api.search,
                 q=search_tags,
-                since='2019-05-01',
+                since='2020-01-01',
                 lang="en").items(1000)
 
 
@@ -66,4 +66,4 @@ for tweet in all_tweets:
     except StopIteration:
         break
 
-'''
+
