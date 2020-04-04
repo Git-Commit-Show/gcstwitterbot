@@ -1,7 +1,8 @@
 import tweepy
+from main import ErrorLog, log
 import logging
 from config import create_api
-import time
+import time, json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -18,14 +19,21 @@ def check_mentions(api, keywords, since_id):
             logger.info("Answering to " + tweet.user.name)
 
             if not tweet.user.following:
-                tweet.user.follow()
+                try:
+                    tweet.user.follow()
+                except tweepy.error.TweepError as e:
+                    ErrorLog("[AUTO ERROR]" + str(e))
 
             text = "@" + tweet.user.screen_name
             tweet_text = text + " please reach us via DM"
-            api.update_status(
-                status=tweet_text,
-                in_reply_to_status_id=tweet.id,
-            )
+            try:
+                api.update_status(
+                    status=tweet_text,
+                    in_reply_to_status_id=tweet.id,
+                )
+            except tweepy.error.TweepError as e:
+                ErrorLog("[AUTO ERROR]" + str(e))
+
     return new_since_id
 
 def main():
@@ -34,7 +42,7 @@ def main():
     while True:
         since_id = check_mentions(api, ["help", "support"], since_id)
         logger.info("Waiting...")
-        time.sleep(6)
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()
