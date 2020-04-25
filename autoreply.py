@@ -2,7 +2,14 @@ import tweepy
 from main import ErrorLog, log
 import logging
 from config import create_api
-import time, json
+from time import gmtime, strftime, sleep
+from datetime import datetime
+import json
+from send_mail import *
+
+
+now = datetime.now()
+timestr = now.strftime("%Y-%m-%d %H:%M:%S")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -22,6 +29,7 @@ def check_mentions(api, keywords, since_id):
                 try:
                     tweet.user.follow()
                 except tweepy.error.TweepError as e:
+                    mail("[ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
                     ErrorLog("[AUTO ERROR]" + str(e))
 
             text = "@" + tweet.user.screen_name
@@ -32,6 +40,7 @@ def check_mentions(api, keywords, since_id):
                     in_reply_to_status_id=tweet.id,
                 )
             except tweepy.error.TweepError as e:
+                mail("[ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
                 ErrorLog("[AUTO ERROR]" + str(e))
 
     return new_since_id
@@ -42,7 +51,7 @@ def main():
     while True:
         since_id = check_mentions(api, ["help", "support"], since_id)
         logger.info("Waiting...")
-        time.sleep(60)
+        sleep(60)
 
 if __name__ == "__main__":
     main()

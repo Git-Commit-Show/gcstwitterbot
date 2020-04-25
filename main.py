@@ -1,12 +1,17 @@
 from config import *
 import json
 from time import gmtime, strftime
+from datetime import datetime
+from send_mail import *
 
 
 # custom logger
 bot_username = 'gitcommitshow'
 logfile_name = bot_username + ".log"
 errorfile_name = "errors.log"
+
+now = datetime.now()
+timestr = now.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def log(message):
@@ -44,19 +49,30 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.user.follow()
                 tweet.favorite()
             except tweepy.error.TweepError as e:
+                mail("[FAVORITE ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
                 ErrorLog("[FAVORITE ERROR] " + e.message)
 
         if not tweet.retweeted:
             try:
                 tweet.retweet()
             except tweepy.error.TweepError as e:
+                mail("[RETWEET ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
                 ErrorLog("[RETWEET ERROR] " + e.message)
 
 
         log(uname + ' said ' + text + "\n")
 
-    def on_error(self, status):
-        print("Error detected")
+    def on_timeout(self):
+        mail("[TIMEOUT] GitCommitShow timeout","Timeout at %s" % (timestr))
+        return True
+
+
+    def on_error(self,status_code):
+        mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
+        return True
+
+    #def on_error(self, status):
+    #    print("Error detected")
 
 
 # lists the first 20 tweets in my timeline
@@ -75,8 +91,15 @@ def main(keywords):
     api = create_api()
     #timeline()
     tweets_listener = MyStreamListener(api)
-    stream = tweepy.Stream(api.auth, tweets_listener)
-    stream.filter(track= keywords)
+    try:
+        stream = tweepy.Stream(api.auth, tweets_listener)
+        stream.filter(track= keywords)
+    except IOError as e:
+        timestr = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
+        print('I just caught the exception: %s' % (e))
+
+
 
 
 if __name__ == "__main__":
