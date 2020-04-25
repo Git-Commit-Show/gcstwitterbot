@@ -20,6 +20,8 @@ def check_mentions(api, keywords, since_id):
     for tweet in tweepy.Cursor(api.mentions_timeline,
                                since_id=since_id).items():
         new_since_id = max(tweet.id, new_since_id)
+        uname = tweet.user.name
+        uid = tweet.id
         if tweet.in_reply_to_status_id is not None:
             continue
         if any(keyword in tweet.text.lower() for keyword in keywords):
@@ -29,7 +31,10 @@ def check_mentions(api, keywords, since_id):
                 try:
                     tweet.user.follow()
                 except tweepy.error.TweepError as e:
-                    mail("[ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
+                    sub = "[ERROR] {0} {1}".format(uid, uname)
+                    mess = str(e)
+                    body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                    mail(sub, body)
                     ErrorLog("[AUTO ERROR]" + str(e))
 
             text = "@" + tweet.user.screen_name
@@ -40,7 +45,10 @@ def check_mentions(api, keywords, since_id):
                     in_reply_to_status_id=tweet.id,
                 )
             except tweepy.error.TweepError as e:
-                mail("[ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
+                sub = "[ERROR] {0} {1}".format(uid, uname)
+                mess = str(e)
+                body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                mail(sub, body)
                 ErrorLog("[AUTO ERROR]" + str(e))
 
     return new_since_id
