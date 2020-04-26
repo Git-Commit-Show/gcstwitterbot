@@ -48,6 +48,7 @@ def check_mentions(api, keywords, since_id):
                     in_reply_to_status_id=tweet.id,
                 )
             except tweepy.error.TweepError as e:
+                sub = "[ERROR] {0}".format(name)
                 tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
