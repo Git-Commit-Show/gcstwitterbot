@@ -38,6 +38,7 @@ class MyStreamListener(tweepy.StreamListener):
     def on_status(self, tweet):
         uname = tweet.user.name
         uid = tweet.user.id
+        tweet_id = tweet.id
         text = tweet.text
         if tweet.in_reply_to_status_id is not None or \
                             tweet.user.id == self.me.id:
@@ -51,7 +52,7 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.favorite()
             except tweepy.error.TweepError as e:
                 sub = "[FAVORITE ERROR] {0}".format(uname)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, uid)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -63,7 +64,7 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.retweet()
             except tweepy.error.TweepError as e:
                 sub = "[RETWEET ERROR] {0}".format(uname)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, uid)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
