@@ -33,7 +33,7 @@ def check_mentions(api, keywords, since_id):
                     tweet.user.follow()
                 except tweepy.error.TweepError as e:
                     sub = "[ERROR] {0}".format(name)
-                    tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
+                    tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
                     mess = tweet_url + "\n"
                     mess += str(e)
                     body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -49,7 +49,7 @@ def check_mentions(api, keywords, since_id):
                 )
             except tweepy.error.TweepError as e:
                 sub = "[ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
+                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)

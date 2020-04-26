@@ -52,7 +52,7 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.favorite()
             except tweepy.error.TweepError as e:
                 sub = "[FAVORITE ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
+                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -64,7 +64,7 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.retweet()
             except tweepy.error.TweepError as e:
                 sub = "[RETWEET ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
+                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
