@@ -49,14 +49,20 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.user.follow()
                 tweet.favorite()
             except tweepy.error.TweepError as e:
-                mail("[FAVORITE ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
+                sub = "[FAVORITE ERROR] {0} {1}".format(uid, uname)
+                mess = str(e)
+                body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                mail(sub, body)
                 ErrorLog("[FAVORITE ERROR] " + e.message)
 
         if not tweet.retweeted:
             try:
                 tweet.retweet()
             except tweepy.error.TweepError as e:
-                mail("[RETWEET ERROR] GitCommitShow error.","Occurred at %s" % (timestr))
+                sub = "[RETWEET ERROR] {0} {1}".format(uid, uname)
+                mess = str(e)
+                body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                mail(sub, body)
                 ErrorLog("[RETWEET ERROR] " + e.message)
 
 
@@ -68,7 +74,8 @@ class MyStreamListener(tweepy.StreamListener):
 
 
     def on_error(self,status_code):
-        mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
+        if status_code ==104:
+            mail("[TwCrawler]TIMEOUT Error","Error code: %i at %s" % (int(status_code),timestr))
         return True
 
     #def on_error(self, status):
@@ -92,10 +99,9 @@ def main(keywords):
     #timeline()
     tweets_listener = MyStreamListener(api)
     try:
-        stream = tweepy.Stream(api.auth, tweets_listener)
+        stream = tweepy.Stream(api.auth, tweets_listeneri, timeout=600)
         stream.filter(track= keywords)
     except IOError as e:
-        timestr = strftime("%Y-%m-%d %H:%M:%S", localtime())
         mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
         print('I just caught the exception: %s' % (e))
 
