@@ -99,7 +99,7 @@ def main(keywords):
     #timeline()
     tweets_listener = MyStreamListener(api)
     try:
-        stream = tweepy.Stream(api.auth, tweets_listeneri, timeout=600)
+        stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
         stream.filter(track= keywords)
     except IOError as e:
         mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
