@@ -21,7 +21,7 @@ def check_mentions(api, keywords, since_id):
                                since_id=since_id).items():
         new_since_id = max(tweet.id, new_since_id)
         uname = tweet.user.name
-        uid = tweet.id
+        uid = tweet.user.id
         if tweet.in_reply_to_status_id is not None:
             continue
         if any(keyword in tweet.text.lower() for keyword in keywords):
@@ -31,8 +31,10 @@ def check_mentions(api, keywords, since_id):
                 try:
                     tweet.user.follow()
                 except tweepy.error.TweepError as e:
-                    sub = "[ERROR] {0} {1}".format(uid, uname)
-                    mess = str(e)
+                    sub = "[ERROR] {0}".format(uname)
+                    tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, uid)
+                    mess = tweet_url + "\n"
+                    mess += str(e)
                     body = "{0} \n\nOccured at {1}".format(mess, timestr)
                     mail(sub, body)
                     ErrorLog("[AUTO ERROR]" + str(e))
@@ -45,8 +47,10 @@ def check_mentions(api, keywords, since_id):
                     in_reply_to_status_id=tweet.id,
                 )
             except tweepy.error.TweepError as e:
-                sub = "[ERROR] {0} {1}".format(uid, uname)
-                mess = str(e)
+                sub = "[ERROR] {0}".format(uname)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, uid)
+                mess = tweet_url + "\n"
+                mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
                 mail(sub, body)
                 ErrorLog("[AUTO ERROR]" + str(e))
