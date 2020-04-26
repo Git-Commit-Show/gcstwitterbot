@@ -36,23 +36,23 @@ class MyStreamListener(tweepy.StreamListener):
         self.me = api.me()
 
     def on_status(self, tweet):
-        uname = tweet.user.name
-        uid = tweet.user.id
+        name = tweet.user.name
+        uname = tweet.user.screen_name
         tweet_id = tweet.id
         text = tweet.text
         if tweet.in_reply_to_status_id is not None or \
                             tweet.user.id == self.me.id:
             return
 
-        print(uname + ' said ' + text + "\n")
+        print(name + ' said ' + text + "\n")
 
         if not tweet.favorited:
             try:
                 tweet.user.follow()
                 tweet.favorite()
             except tweepy.error.TweepError as e:
-                sub = "[FAVORITE ERROR] {0}".format(uname)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
+                sub = "[FAVORITE ERROR] {0}".format(name)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -63,8 +63,8 @@ class MyStreamListener(tweepy.StreamListener):
             try:
                 tweet.retweet()
             except tweepy.error.TweepError as e:
-                sub = "[RETWEET ERROR] {0}".format(uname)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
+                sub = "[RETWEET ERROR] {0}".format(name)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -72,7 +72,7 @@ class MyStreamListener(tweepy.StreamListener):
                 ErrorLog("[RETWEET ERROR] " + e.message)
 
 
-        log(uname + ' said ' + text + "\n")
+        log(name + ' said ' + text + "\n")
 
     def on_timeout(self):
         mail("[TIMEOUT] GitCommitShow timeout","Timeout at %s" % (timestr))
@@ -92,10 +92,10 @@ class MyStreamListener(tweepy.StreamListener):
 def timeline():
     timeline = api.home_timeline()
     for tweet in timeline:
-        uname = tweet.user.name
+        name = tweet.user.name
         text = tweet.text
 
-        log(uname + ' said ' + text + "\n")
+        log(name + ' said ' + text + "\n")
 
 
 def main(keywords):

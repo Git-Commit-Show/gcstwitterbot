@@ -20,8 +20,8 @@ def check_mentions(api, keywords, since_id):
     for tweet in tweepy.Cursor(api.mentions_timeline,
                                since_id=since_id).items():
         new_since_id = max(tweet.id, new_since_id)
-        uname = tweet.user.name
-        uid = tweet.user.id
+        name = tweet.user.name
+        uname = tweet.user.screen_name
         tweet_id = tweet.id
         if tweet.in_reply_to_status_id is not None:
             continue
@@ -32,8 +32,8 @@ def check_mentions(api, keywords, since_id):
                 try:
                     tweet.user.follow()
                 except tweepy.error.TweepError as e:
-                    sub = "[ERROR] {0}".format(uname)
-                    tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
+                    sub = "[ERROR] {0}".format(name)
+                    tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
                     mess = tweet_url + "\n"
                     mess += str(e)
                     body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -48,8 +48,7 @@ def check_mentions(api, keywords, since_id):
                     in_reply_to_status_id=tweet.id,
                 )
             except tweepy.error.TweepError as e:
-                sub = "[ERROR] {0}".format(uname)
-                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uid, tweet_id)
+                tweet_url = "https://twitter.com/{0}/tweet/{1}".format(uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
