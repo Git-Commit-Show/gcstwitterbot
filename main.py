@@ -75,13 +75,23 @@ class MyStreamListener(tweepy.StreamListener):
         log(name + ' said ' + text + "\n")
 
     def on_timeout(self):
-        mail("[TIMEOUT] GitCommitShow timeout","Timeout at %s" % (timestr))
+        sub = "[TwCrawler] TIMEOUT Error"
+        body = "Occured at {0}".format(timestr)
+        mail(sub, body)
         return True
 
 
     def on_error(self,status_code):
         if status_code ==104:
-            mail("[TwCrawler]TIMEOUT Error","Error code: %i at %s" % (int(status_code),timestr))
+            code = int(status_code)
+            sub = "[TwCrawler] TIMEOUT Error {0}".format(code)
+            body = "Occured at {0}".format(timestr)
+            mail(sub, body)
+        else:
+            code = int(status_code)
+            sub = "[TwCrawler] Error {0}".format(code)
+            body = "Occured at {0}".format(timestr)
+            mail(sub, body)
         return True
 
     #def on_error(self, status):
