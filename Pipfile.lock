@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "90a7bd570ead24ab625664b96b28d9c49c49064c1ea6f754e2f85d4c83b770b1"
+            "sha256": "84bad7ee4452850e9e919b20fa8d155c1ebb67b37d073d2af52f97188a8fc1e4"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.6"
+            "python_version": "3.7"
         },
         "sources": [
             {
@@ -37,12 +37,27 @@
             ],
             "version": "==2.9"
         },
+        "jedi": {
+            "hashes": [
+                "sha256:cd60c93b71944d628ccac47df9a60fec53150de53d42dc10a7fc4b5ba6aae798",
+                "sha256:df40c97641cb943661d2db4c33c2e1ff75d491189423249e989bcea4464f3030"
+            ],
+            "index": "pypi",
+            "version": "==0.17.0"
+        },
         "oauthlib": {
             "hashes": [
                 "sha256:bee41cc35fcca6e988463cacc3bcb8a96224f470ca547e697b604cc697b2f889",
                 "sha256:df884cd6cbe20e32633f1db1072e9356f53638e4361bef4e8b03c9127c9328ea"
             ],
             "version": "==3.1.0"
+        },
+        "parso": {
+            "hashes": [
+                "sha256:158c140fc04112dc45bca311633ae5033c2c2a7b732fa33d0955bad8152a8dd0",
+                "sha256:908e9fae2144a076d72ae4e25539143d40b8e3eafbaeae03c1bfe226f4cdf12c"
+            ],
+            "version": "==0.7.0"
         },
         "pysocks": {
             "hashes": [
