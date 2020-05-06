@@ -57,7 +57,7 @@ class MyStreamListener(tweepy.StreamListener):
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
                 mail(sub, body)
-                ErrorLog("[FAVORITE ERROR] " + e.message)
+                ErrorLog("[FAVORITE ERROR] " + str(e))
 
         if not tweet.retweeted:
             try:
@@ -69,7 +69,7 @@ class MyStreamListener(tweepy.StreamListener):
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
                 mail(sub, body)
-                ErrorLog("[RETWEET ERROR] " + e.message)
+                ErrorLog("[RETWEET ERROR] " + str(e))
 
 
         log(name + ' said ' + text + "\n")
