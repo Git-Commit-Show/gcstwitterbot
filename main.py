@@ -125,9 +125,8 @@ def main(keywords):
         errorMsg = 'I just caught the exception {0}'.format(e)
         print(errorMsg)
     finally:
-        status_code = int(status_code)
         sub = "[TwCrawler] GitCommitShow Error"
-        body = "Error Code: {0} at {1}".format(status_code, timestr)
+        body = "Error {0} \n\nOccured at {1}".format(errorMsg, timestr)
         mail(sub, body)
 
 
