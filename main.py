@@ -1,4 +1,5 @@
 from config import *
+import os.path
 import json
 from time import gmtime, strftime
 from datetime import datetime
@@ -16,20 +17,37 @@ timestr = now.strftime("%Y-%m-%d %H:%M:%S")
 
 def log(message):
     """Log message to logfile."""
-    path = os.path.realpath(os.path.join(
-        os.getcwd(), os.path.dirname(__file__)))
-    with open(os.path.join(path, logfile_name), 'a+') as f:
-        t = strftime("%d %b %Y %H:%M:%S", gmtime())
-        f.write("\n" + t + " " + message)
+    file_exists = os.path.isfile(logfile_name)
+    if file_exists:
+        with open(logfile_name, 'a+') as f:
+            t = strftime("%d %b %Y %H:%M:%S", gmtime())
+            f.write("\n" + t + " " + message)
+    else:
+        with open(logfile_name, 'a+') as f:
+            t = strftime("%d %b %Y %H:%M:%S", gmtime())
+            f.write("\n" + t + " " + message)
 
 
 def ErrorLog(message):
-    """Log message to logfile."""
-    path = os.path.realpath(os.path.join(
-        os.getcwd(), os.path.dirname(__file__)))
-    with open(os.path.join(path, errorfile_name), 'a+') as f:
-        t = strftime("%d %b %Y %H:%M:%S", gmtime())
-        f.write("\n" + t + " " + message)
+    file_exists = os.path.isfile(logfile_name)
+    if file_exists:
+        with open(logfile_name, 'a+') as f:
+            t = strftime("%d %b %Y %H:%M:%S", gmtime())
+            f.write("\n" + t + " " + message)
+    else:
+        with open(logfile_name, 'a+') as f:
+            t = strftime("%d %b %Y %H:%M:%S", gmtime())
+            f.write("\n" + t + " " + message)
+
+
+"""
+# Log message to logfile.
+path = os.path.realpath(os.path.join(
+    os.getcwd(), os.path.dirname(__file__)))
+with open(os.path.join(path, errorfile_name), 'a+') as f:
+    t = strftime("%d %b %Y %H:%M:%S", gmtime())
+    f.write("\n" + t + " " + message)
+"""
 
 
 class MyStreamListener(tweepy.StreamListener):
