@@ -31,11 +31,11 @@ def log(message):
 def ErrorLog(message):
     file_exists = os.path.isfile(logfile_name)
     if file_exists:
-        with open(logfile_name, 'a+') as f:
+        with open(errorfile_name, 'a+') as f:
             t = strftime("%d %b %Y %H:%M:%S", gmtime())
             f.write("\n" + t + " " + message)
     else:
-        with open(logfile_name, 'a+') as f:
+        with open(errorfile_name, 'a+') as f:
             t = strftime("%d %b %Y %H:%M:%S", gmtime())
             f.write("\n" + t + " " + message)
 
