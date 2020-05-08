@@ -16,7 +16,8 @@ timestr = now.strftime("%Y-%m-%d %H:%M:%S")
 
 def log(message):
     """Log message to logfile."""
-    path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    path = os.path.realpath(os.path.join(
+        os.getcwd(), os.path.dirname(__file__)))
     with open(os.path.join(path, logfile_name), 'a+') as f:
         t = strftime("%d %b %Y %H:%M:%S", gmtime())
         f.write("\n" + t + " " + message)
@@ -24,7 +25,8 @@ def log(message):
 
 def ErrorLog(message):
     """Log message to logfile."""
-    path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    path = os.path.realpath(os.path.join(
+        os.getcwd(), os.path.dirname(__file__)))
     with open(os.path.join(path, errorfile_name), 'a+') as f:
         t = strftime("%d %b %Y %H:%M:%S", gmtime())
         f.write("\n" + t + " " + message)
@@ -41,7 +43,7 @@ class MyStreamListener(tweepy.StreamListener):
         tweet_id = tweet.id
         text = tweet.text
         if tweet.in_reply_to_status_id is not None or \
-                            tweet.user.id == self.me.id:
+                tweet.user.id == self.me.id:
             return
 
         print(name + ' said ' + text + "\n")
@@ -52,7 +54,8 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.favorite()
             except tweepy.error.TweepError as e:
                 sub = "[FAVORITE ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
+                tweet_url = "https://twitter.com/{0}/status/{1}".format(
+                    uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
@@ -64,13 +67,13 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.retweet()
             except tweepy.error.TweepError as e:
                 sub = "[RETWEET ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
+                tweet_url = "https://twitter.com/{0}/status/{1}".format(
+                    uname, tweet_id)
                 mess = tweet_url + "\n"
                 mess += str(e)
                 body = "{0} \n\nOccured at {1}".format(mess, timestr)
                 mail(sub, body)
                 ErrorLog("[RETWEET ERROR] " + str(e))
-
 
         log(name + ' said ' + text + "\n")
 
@@ -80,9 +83,8 @@ class MyStreamListener(tweepy.StreamListener):
         mail(sub, body)
         return True
 
-
-    def on_error(self,status_code):
-        if status_code ==104:
+    def on_error(self, status_code):
+        if status_code == 104:
             code = int(status_code)
             sub = "[TwCrawler] TIMEOUT Error {0}".format(code)
             body = "Occured at {0}".format(timestr)
@@ -94,7 +96,7 @@ class MyStreamListener(tweepy.StreamListener):
             mail(sub, body)
         return True
 
-    #def on_error(self, status):
+    # def on_error(self, status):
     #    print("Error detected")
 
 
@@ -112,16 +114,21 @@ def main(keywords):
 
     # initialize api
     api = create_api()
-    #timeline()
+    # timeline()
     tweets_listener = MyStreamListener(api)
     try:
         stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
-        stream.filter(track= keywords)
-    except IOError as e:
-        mail("[TwCrawler] GitCommitShow error","Error code: %i at %s" % (int(status_code),timestr))
-        print('I just caught the exception: %s' % (e))
-
-
+        # added async=True - opens a new thread and stops the stream from dying
+        stream.filter(track=keywords, is_async=True)
+    except Exception as e:
+        e = str(e)
+        errorMsg = 'I just caught the exception {0}'.format(e)
+        print(errorMsg)
+    finally:
+        status_code = int(status_code)
+        sub = "[TwCrawler] GitCommitShow Error"
+        body = "Error Code: {0} at {1}".format(status_code, timestr)
+        mail(sub, body)
 
 
 if __name__ == "__main__":
