@@ -110,13 +110,7 @@ def timeline():
         log(name + ' said ' + text + "\n")
 
 
-errorMsg = "Check logs"
-
-
 def main(keywords):
-
-    # global error message
-    global errorMsg
 
     # initialize api
     api = create_api()
@@ -132,7 +126,7 @@ def main(keywords):
         print(errorMsg)
     finally:
         sub = "[TwCrawler] GitCommitShow Error"
-        body = "Error {0} \n\nOccured at {1}".format(errorMsg, timestr)
+        body = "Error occurred at {0}".format(timestr)
         mail(sub, body)
 
 
