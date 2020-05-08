@@ -110,7 +110,8 @@ def timeline():
         log(name + ' said ' + text + "\n")
 
 
-global errorMsg = "Check logs"
+global errorMsg
+errorMsg = "Check logs"
 
 
 def main(keywords):
