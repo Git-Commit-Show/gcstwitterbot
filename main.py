@@ -110,11 +110,13 @@ def timeline():
         log(name + ' said ' + text + "\n")
 
 
-global errorMsg
 errorMsg = "Check logs"
 
 
 def main(keywords):
+
+    # global error message
+    global errorMsg
 
     # initialize api
     api = create_api()
