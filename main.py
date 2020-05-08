@@ -110,6 +110,9 @@ def timeline():
         log(name + ' said ' + text + "\n")
 
 
+errorMsg = "Check logs"
+
+
 def main(keywords):
 
     # initialize api
@@ -122,7 +125,6 @@ def main(keywords):
         stream.filter(track=keywords, is_async=True)
     except Exception as e:
         e = str(e)
-        global errorMsg
         errorMsg = 'I just caught the exception {0}'.format(e)
         print(errorMsg)
     finally:
