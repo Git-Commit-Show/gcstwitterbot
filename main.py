@@ -139,7 +139,7 @@ def main(keywords):
     # timeline()
     tweets_listener = MyStreamListener(api)
     try:
-        stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
+        stream = tweepy.Stream(api.auth, tweets_listener, verify = False, timeout=600)
         # added async=True - opens a new thread and stops the stream from dying
         stream.filter(track=keywords, is_async=True)
     except Exception as e:
