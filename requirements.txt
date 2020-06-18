@@ -1,0 +1,8 @@
+autopep8
+jedi
+python-dotenv
+python-twitter
+requests
+requests-oauthlib
+tweepy
+urllib3

@@ -3,13 +3,13 @@ from email.mime.multipart import MIMEMultipart
 #from email.mime.base import MIMEBase
 #from email import encoders
 import smtplib
-import gmail_config
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-
-email_user = gmail_config.EMAIL_ID
-email_password = gmail_config.PASSWORD
-email_send = gmail_config.RECEIPENT_EMAIL
-
+email_user = os.getenv('EMAIL_ID')
+email_password = os.getenv('PASSWORD')
+email_send = os.getenv('TO')
 
 def mail(subject, body):
 
