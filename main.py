@@ -138,7 +138,7 @@ def main(keywords):
     api = create_api()
     # timeline()
     tweets_listener = MyStreamListener(api)
-    While:
+    while True:
         try:
             # stream = tweepy.Stream(api.auth, tweets_listener, verify = False, timeout=600)
             stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
