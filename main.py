@@ -144,6 +144,14 @@ def main(keywords):
             stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
             # added async=True - opens a new thread and stops the stream from dying
             stream.filter(track=keywords, is_async=False)
+
+        except TweepError as e:
+            if 'Failed to send request:' in e.reason:
+                print("Time out error caught.")
+                sleep(180)
+                continue
+
+
         except Exception as e:
             e = str(e)
             errorMsg = 'I just caught the exception {0}'.format(e)
@@ -151,9 +159,7 @@ def main(keywords):
             sub = "[TwCrawler] GitCommitShow Error"
             body = "Error {0} \n\nOccurred at {1}".format(errorMsg, timestr)
             mail(sub, body)
-            sleep(15*60)
-            continue
 
 
 if __name__ == "__main__":
-    main(["#gitcommitshow", "#GitCommitShow", "gitcommitshow", "gitcommit.show"])
+    main(["#gitcommitshow", "gitcommitshow"])
