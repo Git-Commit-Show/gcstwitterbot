@@ -1,7 +1,7 @@
 from config import *
 import os.path
 import json
-from time import gmtime, strftime
+from time import gmtime, strftime, sleep
 from datetime import datetime
 from send_mail import *
 
@@ -138,17 +138,21 @@ def main(keywords):
     api = create_api()
     # timeline()
     tweets_listener = MyStreamListener(api)
-    try:
-        stream = tweepy.Stream(api.auth, tweets_listener, verify = False, timeout=600)
-        # added async=True - opens a new thread and stops the stream from dying
-        stream.filter(track=keywords, is_async=True)
-    except Exception as e:
-        e = str(e)
-        errorMsg = 'I just caught the exception {0}'.format(e)
-        print(errorMsg)
-        sub = "[TwCrawler] GitCommitShow Error"
-        body = "Error {0} \n\nOccurred at {1}".format(errorMsg, timestr)
-        mail(sub, body)
+    While:
+        try:
+            # stream = tweepy.Stream(api.auth, tweets_listener, verify = False, timeout=600)
+            stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
+            # added async=True - opens a new thread and stops the stream from dying
+            stream.filter(track=keywords, is_async=False)
+        except Exception as e:
+            e = str(e)
+            errorMsg = 'I just caught the exception {0}'.format(e)
+            print(errorMsg)
+            sub = "[TwCrawler] GitCommitShow Error"
+            body = "Error {0} \n\nOccurred at {1}".format(errorMsg, timestr)
+            mail(sub, body)
+            sleep(15*60)
+            continue
 
 
 if __name__ == "__main__":
