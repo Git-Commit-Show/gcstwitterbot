@@ -21,7 +21,7 @@ def mail(subject, body):
     msg.attach(MIMEText(body,'plain'))
 
     '''
-    filename='Fairy Tail Emotional Soundtracks Mix -- WE ARE FAMILY --.3gp'
+    filename='some file with spaces'
     attachment  =open(filename,'rb')
 
     part = MIMEBase('application','octet-stream')
