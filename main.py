@@ -145,7 +145,7 @@ def main(keywords):
             # added async=True - opens a new thread and stops the stream from dying
             stream.filter(track=keywords, is_async=False)
 
-        except TweepError as e:
+        except tweepy.error.TweepError as e:
             if 'Failed to send request:' in e.reason:
                 print("Time out error caught.")
                 sleep(180)
