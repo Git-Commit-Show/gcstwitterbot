@@ -59,7 +59,22 @@ class MyStreamListener(tweepy.StreamListener):
         name = tweet.user.name
         uname = tweet.user.screen_name
         tweet_id = tweet.id
-        text = tweet.text
+        '''
+        Referenced in issue#974
+        https://github.com/tweepy/tweepy/issues/974#issuecomment-493283899
+        '''
+        if hasattr(tweet, 'retweeted_status'):
+            try:
+                text = tweet.retweeted_status.extended_tweet["full_text"]
+            except:
+                text = tweet.retweeted_status.text
+        else:
+            try:
+                text = tweet.extended_tweet["full_text"]
+            except AttributeError:
+                text = tweet.text
+
+        #text = tweet.text
         if tweet.in_reply_to_status_id is not None or \
                 tweet.user.id == self.me.id:
             return
