@@ -1,10 +1,10 @@
-from .config import *
+from config import *
 import os.path
 import json
 from time import gmtime, strftime, sleep
 from datetime import datetime
-from .send_mail import *
-from .settings import *
+from send_mail import *
+from settings import *
 
 
 # custom logger
