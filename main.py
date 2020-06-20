@@ -1,9 +1,10 @@
-from config import *
+from .config import *
 import os.path
 import json
 from time import gmtime, strftime, sleep
 from datetime import datetime
-from send_mail import *
+from .send_mail import *
+from .settings import *
 
 
 # custom logger
@@ -79,36 +80,61 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet.user.id == self.me.id:
             return
 
-        print(name + ' said ' + text + "\n")
+        print('-'*20)
+        print("\n" + name + ' said ' + text + "\n")
+        print('-'*20)
 
-        if not tweet.favorited:
-            try:
-                tweet.user.follow()
-                tweet.favorite()
-            except tweepy.error.TweepError as e:
-                sub = "[FAVORITE ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/status/{1}".format(
-                    uname, tweet_id)
-                mess = tweet_url + "\n"
-                mess += str(e)
-                body = "{0} \n\nOccured at {1}".format(mess, timestr)
-                mail(sub, body)
-                ErrorLog("[FAVORITE ERROR] " + str(e))
+        if FAVORITE:
+            if not tweet.favorited:
+                try:
+                    tweet.user.follow()
+                    tweet.favorite()
+                except tweepy.error.TweepError as e:
+                    ErrorLog("[FAVORITE ERROR] " + str(e))
+                    if MAIL:
+                        sub = "[FAVORITE ERROR] {0}".format(name)
+                        tweet_url = "https://twitter.com/{0}/status/{1}".format(
+                            uname, tweet_id)
+                        mess = tweet_url + "\n"
+                        mess += str(e)
+                        body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                        mail(sub, body)
 
-        if not tweet.retweeted:
-            try:
-                tweet.retweet()
-            except tweepy.error.TweepError as e:
-                sub = "[RETWEET ERROR] {0}".format(name)
-                tweet_url = "https://twitter.com/{0}/status/{1}".format(
-                    uname, tweet_id)
-                mess = tweet_url + "\n"
-                mess += str(e)
-                body = "{0} \n\nOccured at {1}".format(mess, timestr)
-                mail(sub, body)
-                ErrorLog("[RETWEET ERROR] " + str(e))
+        if FOLLOW: 
+            if not tweet.user.following: 
+                try:
+                    tweet.user.follow()
+                except tweepy.error.TweepError as e:
+                    ErrorLog("[FOLLOW ERROR] " + str(e))
+                    if MAIL:
+                        sub = "[FOLLOW ERROR] {0}".format(name)
+                        tweet_url = "https://twitter.com/{0}/status/{1}".format(
+                            uname, tweet_id)
+                        mess = tweet_url + "\n"
+                        mess += str(e)
+                        body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                        mail(sub, body)
+
+
+        if RETWEET:
+            if not tweet.retweeted:
+                try:
+                    tweet.retweet()
+                except tweepy.error.TweepError as e:
+                    ErrorLog("[RETWEET ERROR] " + str(e))
+                    if MAIL:
+                        sub = "[RETWEET ERROR] {0}".format(name)
+                        tweet_url = "https://twitter.com/{0}/status/{1}".format(
+                            uname, tweet_id)
+                        mess = tweet_url + "\n"
+                        mess += str(e)
+                        body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                        mail(sub, body)
 
         log(name + ' said ' + text + "\n")
+
+        # Twitter bot sleep time settings in seconds. Use large delays so that you account will not banned
+        sleep(DELAY) # 300 seconds = 5 minutes
 
     def on_timeout(self):
         sub = "[TwCrawler] TIMEOUT Error"
@@ -117,16 +143,17 @@ class MyStreamListener(tweepy.StreamListener):
         return True
 
     def on_error(self, status_code):
-        if status_code == 104:
-            code = int(status_code)
-            sub = "[TwCrawler] TIMEOUT Error {0}".format(code)
-            body = "Occured at {0}".format(timestr)
-            mail(sub, body)
-        else:
-            code = int(status_code)
-            sub = "[TwCrawler] Error {0}".format(code)
-            body = "Occured at {0}".format(timestr)
-            mail(sub, body)
+        if MAIL:
+            if status_code == 104:
+                code = int(status_code)
+                sub = "[TwCrawler] TIMEOUT Error {0}".format(code)
+                body = "Occured at {0}".format(timestr)
+                mail(sub, body)
+            else:
+                code = int(status_code)
+                sub = "[TwCrawler] Error {0}".format(code)
+                body = "Occured at {0}".format(timestr)
+                mail(sub, body)
         return True
 
     # def on_error(self, status):
@@ -155,6 +182,7 @@ def main(keywords):
     tweets_listener = MyStreamListener(api)
     while True:
         try:
+            # verify = False disables the SSL Verification. Not at all suggested.
             # stream = tweepy.Stream(api.auth, tweets_listener, verify = False, timeout=600)
             stream = tweepy.Stream(api.auth, tweets_listener, timeout=600)
             # added async=True - opens a new thread and stops the stream from dying
@@ -171,10 +199,11 @@ def main(keywords):
             e = str(e)
             errorMsg = 'I just caught the exception {0}'.format(e)
             print(errorMsg)
-            sub = "[TwCrawler] GitCommitShow Error"
-            body = "Error {0} \n\nOccurred at {1}".format(errorMsg, timestr)
-            mail(sub, body)
+            if MAIL:
+                sub = "[TwCrawler] GitCommitShow Error"
+                body = "Error {0} \n\nOccurred at {1}".format(errorMsg, timestr)
+                mail(sub, body)
 
 
 if __name__ == "__main__":
-    main(["#gitcommitshow", "gitcommitshow"])
+    main(HASHTAG_LIST)
