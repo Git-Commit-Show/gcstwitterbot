@@ -10,7 +10,7 @@ from settings import KEYWORDS, FOLLOW, MAIL
 now = datetime.now()
 timestr = now.strftime("%Y-%m-%d %H:%M:%S")
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='autoreply.log', level=logging.DEBUG)
 logger = logging.getLogger()
 
 def check_mentions(api, KEYWORDS, since_id):
@@ -25,38 +25,42 @@ def check_mentions(api, KEYWORDS, since_id):
         if tweet.in_reply_to_status_id is not None:
             continue
         if any(keyword in tweet.text.lower() for keyword in KEYWORDS.keys()):
-            logger.info("Answering to " + tweet.user.name)
+            if tweet_id in IGNORE.values():
+                logger.warning("Skipping " + tweet.user.name)
+            else:
+                IGNORE.update(uname = tweet_id)
+                logger.info("Replying to " + tweet.user.name)
 
-            if FOLLOW:
-                if not tweet.user.following:
-                    try:
-                        tweet.user.follow()
-                    except tweepy.error.TweepError as e:
-                        ErrorLog("[AUTO ERROR] Already Followed. " + str(e))
-                        if MAIL:
-                            sub = "[ERROR] {0}".format(name)
-                            tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
-                            mess = tweet_url + "\n"
-                            mess += str(e)
-                            body = "{0} \n\nOccured at {1}".format(mess, timestr)
-                            mail(sub, body)
+                if FOLLOW:
+                    if not tweet.user.following:
+                        try:
+                            tweet.user.follow()
+                        except tweepy.error.TweepError as e:
+                            ErrorLog("[AUTO ERROR] Already Followed. " + str(e))
+                            if MAIL:
+                                sub = "[ERROR] {0}".format(name)
+                                tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
+                                mess = tweet_url + "\n"
+                                mess += str(e)
+                                body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                                mail(sub, body)
 
-            tweet_handle = "@" + tweet.user.screen_name
-            tweet_text = tweet_handle + " " + KEYWORDS[keyword]
-            try:
-                api.update_status(
-                    status=tweet_text,
-                    in_reply_to_status_id=tweet.id,
-                )
-            except tweepy.error.TweepError as e:
-                ErrorLog("[AUTO ERROR]" + str(e))
-                if MAIL:
-                    sub = "[ERROR] {0}".format(name)
-                    tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
-                    mess = tweet_url + "\n"
-                    mess += str(e)
-                    body = "{0} \n\nOccured at {1}".format(mess, timestr)
-                    mail(sub, body)
+                tweet_handle = "@" + tweet.user.screen_name
+                tweet_text = tweet_handle + " " + KEYWORDS[keyword]
+                try:
+                    api.update_status(
+                        status=tweet_text,
+                        in_reply_to_status_id=tweet.id,
+                    )
+                except tweepy.error.TweepError as e:
+                    ErrorLog("[AUTO ERROR]" + str(e))
+                    if MAIL:
+                        sub = "[ERROR] {0}".format(name)
+                        tweet_url = "https://twitter.com/{0}/status/{1}".format(uname, tweet_id)
+                        mess = tweet_url + "\n"
+                        mess += str(e)
+                        body = "{0} \n\nOccured at {1}".format(mess, timestr)
+                        mail(sub, body)
 
     return new_since_id
 
