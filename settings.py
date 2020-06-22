@@ -12,7 +12,7 @@ HASHTAG_LIST = ["#gitcommitshow", "#GitCommitShow", "gitcommitshow", "GitCommitS
 
 KEYWORDS = {
 
-        "help" : "Please DM us your query.",
+        "#help" : "Please DM us your query.",
         "#feedback":"Write in your query at https://feedback.gitcommit.show/"
 
         }
