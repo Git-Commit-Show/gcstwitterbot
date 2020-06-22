@@ -61,7 +61,8 @@ class MyStreamListener(tweepy.StreamListener):
         uname = tweet.user.screen_name
         tweet_id = tweet.id
         '''
-        Referenced in issue#974
+        Referenced in issue#974 and issue#617
+        https://github.com/tweepy/tweepy/issues/617#issuecomment-142439777
         https://github.com/tweepy/tweepy/issues/974#issuecomment-493283899
         '''
         if hasattr(tweet, 'retweeted_status'):
